@@ -1,0 +1,9 @@
+cryptography
+numpy
+pandas
+requests
+tqdm
+bs4
+openai
+tiktoken
+datasets
