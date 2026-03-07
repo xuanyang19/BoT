@@ -1,12 +1,10 @@
-# Batch-of-Thought (BoT): Cross-Instance Learning for Enhanced LLM Reasoning
-
-This repository contains the official implementation for the paper:
+This repository contains the implementation for the paper:
 
 **Batch-of-Thought: Cross-Instance Learning for Enhanced LLM Reasoning**
 
 *Xuan Yang, Furong Jia, Roy Xie, Xiong Xi, Hengwei Bian, Jian Li, Monica Agrawal*
 
-*Duke University & ByteDance Inc.*
+*ByteDance Inc. & Duke University*
 
 ---
 
@@ -18,10 +16,6 @@ Current LLM reasoning systems process queries independently, discarding valuable
   <img src="assets/bot_pipeline.png" alt="BoT-R Pipeline" width="85%"/>
 </p>
 
-**Key results:**
-- Consistent accuracy improvements across **3 model families** and **6 benchmarks**
-- Up to **61% reduction** in inference costs (46.9% average)
-- Improved confidence calibration
 
 ## Repository Structure
 
@@ -169,11 +163,3 @@ Edit `runner_pipeline/model.py` to add your model to `SUPPORTED_MODELS`.
 }
 ```
 
-## License
-
-This project is for research purposes. Please refer to the LICENSE file for details.
-
-## Contact
-
-For questions or issues, please open a GitHub issue or contact:
-- Xuan Yang ([xuan.yang@duke.edu](mailto:xuan.yang@duke.edu))
