@@ -3,7 +3,7 @@ import re
 import time
 from typing import List, Dict, Any, Optional, Tuple
 import pandas as pd
-from evaluate import evaluate_correctness
+from .evaluate import evaluate_correctness
 
 # =========================
 # JSON parsing (no PCRE recursion)

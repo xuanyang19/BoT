@@ -14,13 +14,13 @@ import numpy as np
 import pandas as pd
 
 # Import our generic API client
-from api_client import get_openai_client
-from model import SUPPORTED_MODELS, DEFAULT_MODEL
+from .api_client import get_openai_client
+from .model import SUPPORTED_MODELS, DEFAULT_MODEL
 
 # Import our modular components
-from dataloader import load_dataset_router
-from batching import build_batches
-from actor_refinement import (
+from .dataloader import load_dataset_router
+from .batching import build_batches
+from .actor_refinement import (
     run_conversation_actor, run_conversation_ref, make_query,
     evaluate_correctness, build_reflection_prompt, _best_effort_json, _gemini_best_effort_json
 )

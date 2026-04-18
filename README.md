@@ -1,10 +1,13 @@
-This repository contains the implementation for the paper:
+# Batch-of-Thought: Cross-Instance Learning for Enhanced LLM Reasoning
 
-**Batch-of-Thought: Cross-Instance Learning for Enhanced LLM Reasoning**
+[![arXiv](https://img.shields.io/badge/arXiv-2601.02950-b31b1b.svg)](https://arxiv.org/abs/2601.02950)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-*Xuan Yang, Furong Jia, Roy Xie, Xiong Xi, Hengwei Bian, Jian Li, Monica Agrawal*
+**Xuan Yang, Furong Jia, Roy Xie, Xiong Xi, Hengwei Bian, Jian Li, Monica Agrawal**
 
-*ByteDance Inc. & Duke University*
+*Duke University & ByteDance Inc.*
+
+**ACL 2026 Oral Paper** | [Paper](https://arxiv.org/abs/2601.02950)
 
 ---
 
@@ -16,23 +19,23 @@ Current LLM reasoning systems process queries independently, discarding valuable
   <img src="assets/bot_pipeline.png" alt="BoT-R Pipeline" width="85%"/>
 </p>
 
-
 ## Repository Structure
 
 ```
 BoT/
-├── open_src_runner/          # Open-source implementation
-│   ├── runner_pipeline/
-│   │   ├── main.py           # Main pipeline (ActorRefinementPipeline)
-│   │   ├── actor_refinement.py  # Actor & Reflector logic, prompts
-│   │   ├── dataloader.py     # Dataset loaders (HuggingFace) + custom dataset interface
-│   │   ├── evaluate.py       # Evaluation metrics
-│   │   ├── batching.py       # Batch construction (sequential/random/k-means)
-│   │   └── model.py          # Supported model definitions
-│   ├── example_run.sh        # Example run scripts
-│   └── README.md
+├── bot/                      # Core implementation
+│   ├── main.py               # Pipeline orchestrator (ActorRefinementPipeline)
+│   ├── actor_refinement.py   # Actor & Reflector logic, prompts
+│   ├── dataloader.py         # Dataset loaders (HuggingFace) + custom dataset interface
+│   ├── evaluate.py           # Evaluation metrics
+│   ├── batching.py           # Batch construction (sequential/random/k-means)
+│   ├── api_client.py         # OpenAI client wrapper
+│   └── model.py              # Supported model definitions
+├── scripts/
+│   └── run.sh                # Example run script
 ├── assets/                   # Figures
-└── requirements.txt
+├── requirements.txt
+└── LICENSE
 ```
 
 ## Installation
@@ -59,19 +62,22 @@ export OPENAI_API_KEY="your-api-key-here"
 ### 2. Run BoT-R
 
 ```bash
-cd open_src_runner/runner_pipeline
-
 # Run on MedQA (default)
-python main.py --dataset medqa --split test --batch_size 8
+python -m bot.main --dataset medqa --split test --batch_size 8
 
 # Run on Winogrande with a subset
-python main.py --dataset winogrande --split test --batch_size 4 --limit 100
+python -m bot.main --dataset winogrande --split test --batch_size 4 --limit 100
+```
+
+Or use the example script:
+```bash
+bash scripts/run.sh
 ```
 
 ## Usage
 
 ```bash
-python main.py \
+python -m bot.main \
   --dataset <dataset> \
   --split <split> \
   --batch_size <N> \
@@ -102,10 +108,10 @@ python main.py \
 
 | Benchmark | Task | Type |
 |-----------|------|------|
-| [MedQA](https://huggingface.co/datasets/GBaker/MedQA-USMLE-4-options) | Medical QA (USMLE) | Multiple choice (A–D) |
+| [MedQA](https://huggingface.co/datasets/GBaker/MedQA-USMLE-4-options) | Medical QA (USMLE) | Multiple choice (A--D) |
 | [Winogrande](https://huggingface.co/datasets/winogrande) | Commonsense reasoning | Binary choice |
 
-Additional benchmarks (PubMedQA, GPQA, SMS Spam, Seller Fraud Detection) are reported in the paper. See `dataloader.py` for the custom dataset interface to add your own datasets.
+Additional benchmarks (PubMedQA, GPQA, SMS Spam, Seller Fraud Detection) are reported in the paper. See `bot/dataloader.py` for the custom dataset interface to add your own.
 
 ## Output Format
 
@@ -133,24 +139,27 @@ Each checkpoint contains:
 BoT-R operates in three stages:
 
 1. **Actor**: Generates answer-rationale pairs for a batch of queries, optionally using external tools.
-2. **Reflector**: Jointly evaluates all responses through comparative analysis — identifying inconsistencies, extracting shared domain knowledge, and suggesting refinements.
+2. **Reflector**: Jointly evaluates all responses through comparative analysis -- identifying inconsistencies, extracting shared domain knowledge, and suggesting refinements.
 3. **Conditional Refinement**: Only items flagged by the Reflector are re-evaluated with targeted feedback (up to 8 rounds).
 
 By treating queries as a cohort rather than independent instances, BoT enables:
-- **Cross-instance consistency checks** — detecting errors through comparison
-- **Reasoning pattern propagation** — transferring validated knowledge across instances
-- **Distributional uncertainty calibration** — more reliable confidence estimates
-- **Cost amortization** — one joint reflection call replaces N independent ones
+- **Cross-instance consistency checks** -- detecting errors through comparison
+- **Reasoning pattern propagation** -- transferring validated knowledge across instances
+- **Distributional uncertainty calibration** -- more reliable confidence estimates
+- **Cost amortization** -- one joint reflection call replaces N independent ones
 
-## Adding Custom Datasets
+## Customization
 
-1. Add a loader function in `dataloader.py`
-2. Add an evaluator in `evaluate.py`
-3. Update the routing logic in both files
+### Adding Custom Datasets
 
-## Adding Custom Models
+1. Add a loader function in `bot/dataloader.py`
+2. Add an evaluator in `bot/evaluate.py`
+3. Add a prompt and query builder in `bot/actor_refinement.py`
+4. Update the routing logic in all three files
 
-Edit `runner_pipeline/model.py` to add your model to `SUPPORTED_MODELS`.
+### Adding Custom Models
+
+Edit `bot/model.py` to add your model to `SUPPORTED_MODELS`.
 
 ## Citation
 
@@ -162,4 +171,3 @@ Edit `runner_pipeline/model.py` to add your model to `SUPPORTED_MODELS`.
   year={2026}
 }
 ```
-
