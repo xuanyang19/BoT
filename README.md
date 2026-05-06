@@ -7,7 +7,7 @@
 
 *Duke University & ByteDance Inc.*
 
-**ACL 2026 Oral Paper** | [Paper](https://arxiv.org/abs/2601.02950)
+[Paper](https://arxiv.org/abs/2601.02950)
 
 ---
 
